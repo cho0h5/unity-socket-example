@@ -6,9 +6,10 @@ using System.Net;
 using System.Text;
 using System;
 
+[Serializable]
 public class GameData
 {
-    public int Count { get; set; }
+    public int Count;
 }
 
 public class NetworkManager : MonoBehaviour
@@ -25,10 +26,15 @@ public class NetworkManager : MonoBehaviour
 
     private void Update()
     {
+        GameData gameData = new GameData();
+        gameData.Count = (count++) % 10;
+
+        string jsonData = JsonUtility.ToJson(gameData);
+        Debug.Log(jsonData);
 
         // send string data
-        byte[] data = Encoding.Default.GetBytes("this is unity" + (count++)%10);
-        clientSocket.BeginSend(data, 0, 14, SocketFlags.None,
+        byte[] data = Encoding.Default.GetBytes(jsonData);
+        clientSocket.BeginSend(data, 0, jsonData.Length, SocketFlags.None,
                                 new AsyncCallback(sendStr), clientSocket);
 
     }
